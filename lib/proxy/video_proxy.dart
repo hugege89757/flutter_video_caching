@@ -31,13 +31,14 @@ class VideoProxy {
     int segmentSize = 2,
     int maxConcurrentDownloads = 8,
     UrlMatcher? urlMatcher,
+    LocalProxyServer? customProxyServer,
   }) async {
     Config.memoryCacheSize = maxMemoryCacheSize * Config.mbSize;
     Config.storageCacheSize = maxStorageCacheSize * Config.mbSize;
     Config.segmentSize = segmentSize * Config.mbSize;
 
     Config.logPrint = logPrint;
-    _localProxyServer = LocalProxyServer(ip: ip, port: port);
+    _localProxyServer = customProxyServer ?? LocalProxyServer(ip: ip, port: port);
     await _localProxyServer.start();
     hlsPlaylistParser = HlsPlaylistParser.create();
     downloadManager = DownloadManager(maxConcurrentDownloads);
