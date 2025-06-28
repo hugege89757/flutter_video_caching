@@ -29,7 +29,7 @@ class LocalProxyServer {
       final InternetAddress internetAddress = InternetAddress(Config.ip);
       server = await ServerSocket.bind(internetAddress, Config.port);
       logD('Proxy server started ${server?.address.address}:${server?.port}');
-      server?.listen(_handleConnection);
+      server?.listen(handleConnection);
     } on SocketException catch (e) {
       // If the port is occupied, try to use the next port
       if (e.osError?.errorCode == 98) {
@@ -44,7 +44,7 @@ class LocalProxyServer {
     await server?.close();
   }
 
-  Future<void> _handleConnection(Socket socket) async {
+  Future<void> handleConnection(Socket socket) async {
     try {
       logV('_handleConnection start');
       StringBuffer buffer = StringBuffer();
@@ -97,11 +97,8 @@ class LocalProxyServer {
   /// 发送400
   Future<void> send400(Socket socket) async {
     logD('HTTP/1.1 400 Bad Request');
-    final String headers = <String>[
-      'HTTP/1.1 400 Bad Request',
-      'Content-Type: text/plain',
-      'Bad Request'
-    ].join(httpTerminal);
+    final String headers =
+        <String>['HTTP/1.1 400 Bad Request', 'Content-Type: text/plain', 'Bad Request'].join(httpTerminal);
     await socket.append(headers);
   }
 }
